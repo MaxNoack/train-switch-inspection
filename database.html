@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html ng-app="myApp" ng-app lang="swe">
+<head>
+    <meta charset="ISO-8859-1">
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <link href="css/stylesheet.css" rel="stylesheet">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+    <style type="text/css">
+    ul>li, a{cursor: pointer;}
+    </style>
+    <title>Planering Tirawa</title>
+    <script src="js/jquery-2.1.3.js"></script>
+    <script src="js/javascript.js"></script>
+    <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+    <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+
+</head>
+<body class="target">
+<div class="navbar navbar-default" id="navbar">
+    <div class="container" id="navbar-container">
+        <div class="navbar-header">
+            <ul class="nav navbar-nav">
+                <li><a class="menuitem" href="index.html"><i class="fa fa-search"></i>  Sök</a></li>
+                <li class="dropdown">
+                  <a class="menuitem"><i class="fa fa-pencil"></i>  Planera <b class="caret"></b></a>
+                  <ul class="dropdown-menu sub-menu">
+                    <li><a class="menuitem" href="planStaff.html"><i class="fa fa-user"></i>  Planera personal</a></li>
+                    <li><a class="menuitem" href="planSwitches.html"><img src="files/trackglyph2.jpg" class="makeglyph">  Planera växlar</a></li>
+                  </ul>
+                </li>
+                <li class="dropdown">
+                  <a class="menuitem"><i class="fa fa-eye"></i>  Översikt <b class="caret"></b></a>
+                  <ul class="dropdown-menu sub-menu">
+                    <li><a class="menuitem" href="overviewLastweek.html"><i class="fa fa-exclamation  fa-fw"></i>  Översikt förfalloveckor</a></li>
+                    <li><a class="menuitem" href="overviewPlannedweek.html"><i class="fa fa-table  fa-fw"></i>  Översikt planerade veckor</a></li>
+                  </ul>
+                </li>
+                <li class="navbar-active"><a class="menuitem" href="database.html"><i class="fa fa-database"></i>  Hantera databas</a></li>
+                
+            </ul>
+        </div><!-- /.navbar-header -->
+        <div class="navbar-header pull-right">
+            <ul class="nav navbar-nav">
+                <li><input type="text" ng-model="username" placeholder="Användarnamn" class="form-control" /></li>
+                <li><input type="password" ng-model="password"  placeholder="Lösenord" class="form-control" /></li>
+                <li><button ng-model="login" class="form-control">Logga in</button></li>
+        </div><!-- /.navbar-header -->
+    </div>
+</div>
+
+
+
+<?php 
+require_once 'core/init.php';
+
+
+?> 
+<div ng-controller="DatabaseController">
+    <div class="container">
+        <div class="row">
+
+          <div class='col-md-3'>
+            <input type='button' onClick='buildInformation();' class='btn btn-default' id="buildinformation" name="buildinformation" value='Skapa databas'>
+          </div>
+          <div class='col-md-3'>
+            <input type='button' onClick='buildStaffplanning();' class='btn btn-default' id="buildstaffplanning" name="buildstaffplanning" value='Skapa personaldatabas'>
+          </div>
+
+       </div>
+       <div class="row col-md-12" id="loading" style="display:none">
+         <div class='col-md-4 col-md-offset-4'>
+          <div class="row loader">
+            <img src="files/ajax-loader.gif">
+          </div>
+          <div class="row">
+            <h3>Uppdaterar databasen</h3>
+          </div>
+        </div>
+      </div>
+    </div>
+</div>
+
+
+
+<script>
+  $("#loading").hide();
+</script>
+ 
+
+<script src="bower_components/angular/angular.js"></script>
+<script src="bower_components/jquery/dist/jquery.js"></script>
+<script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>  
+<script src="js/ui-bootstrap-tpls-0.10.0.min.js"></script>
+
+ 
+
+
+
+
+    <!-- Modules -->
+    <script src="js/app.js"></script>
+
+    <!-- Controllers -->
+    <script src="js/controllers/OverviewController.js"></script>
+    <script src="js/controllers/SearchController.js"></script>
+    <script src="js/controllers/StaffplanningController.js"></script>
+    <script src="js/controllers/DatabaseController.js"></script>
+    <script src="js/controllers/SwitchplanningController.js"></script>
+    <!-- Services -->
+    <script src="js/factories/overview.js"></script>
+    <script src="js/factories/places.js"></script>
+    <script src="js/factories/regions.js"></script>
+    <script src="js/factories/staffplanning.js"></script>
+    <script src="js/factories/switches.js"></script>
+    <script src="js/factories/trackparts.js"></script>
+    <script src="js/factories/weeks.js"></script>
+    <script src="js/factories/inspectionclasses.js"></script>
+    <!-- Directives -->
+    <script src="js/directives/switchRow.js"></script>
+
+
+    </body>
+</html>

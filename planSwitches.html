@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html ng-app="myApp" ng-app lang="swe">
+<head>
+    <meta charset="ISO-8859-1">
+    <link href="bower_components/bootstrap/dist/css/bootstrap.css" rel="stylesheet">
+    <link href="css/stylesheet.css" rel="stylesheet">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+    <style type="text/css">
+    ul>li, a{cursor: pointer;}
+    </style>
+    <title>Planering Tirawa</title>
+
+
+</head>
+<body >
+<div class="navbar navbar-default" id="navbar">
+    <div class="container" id="navbar-container">
+        <div class="navbar-header">
+            <ul class="nav navbar-nav">
+                <li><a class="menuitem" href="index.html"><i class="fa fa-search"></i>  Sök</a></li>
+                <li class="dropdown navbar-active">
+                  <a class="menuitem"><i class="fa fa-pencil"></i>  Planera <b class="caret"></b></a>
+                  <ul class="dropdown-menu sub-menu">
+                    <li><a class="menuitem" href="planStaff.html"><i class="fa fa-user"></i>  Planera personal</a></li>
+                    <li><a class="menuitem" href="planSwitches.html"><img src="files/trackglyph2.jpg" class="makeglyph">  Planera växlar</a></li>
+                  </ul>
+                </li>
+                <li class="dropdown">
+                  <a class="menuitem"><i class="fa fa-eye"></i>  Översikt <b class="caret"></b></a>
+                  <ul class="dropdown-menu sub-menu">
+                    <li><a class="menuitem" href="overviewLastweek.html"><i class="fa fa-exclamation  fa-fw"></i>  Översikt förfalloveckor</a></li>
+                    <li><a class="menuitem" href="overviewPlannedweek.html"><i class="fa fa-table  fa-fw"></i>  Översikt planerade veckor</a></li>
+                  </ul>
+                </li>
+                <li><a class="menuitem" href="database.html"><i class="fa fa-database"></i>  Hantera databas</a></li>
+                
+            </ul>
+        </div><!-- /.navbar-header -->
+        <div class="navbar-header pull-right">
+            <ul class="nav navbar-nav">
+                <li><input type="text" ng-model="username" placeholder="Användarnamn" class="form-control" /></li>
+                <li><input type="password" ng-model="password"  placeholder="Lösenord" class="form-control" /></li>
+                <li><button ng-model="login" class="form-control">Logga in</button></li>
+        </div><!-- /.navbar-header -->
+    </div>
+</div>
+
+
+
+
+<div ng-controller="SwitchplanningController">
+    <div class="container" ng-mouseup="mouseup()">
+
+        <div class="row col-md-offset-1">
+            <div class='col-md-2 '>
+                <input type='button' ng-click='planRegion("Syd")' class='btn btn-default' value='Planera syd'>
+            </div>
+            <div class='col-md-2'>
+             <input type='button' ng-click='planRegion("Väst")' class='btn btn-default' value='Planera väst'>
+            </div>
+            <div class='col-md-2'>
+                <input type='button' ng-click='planRegion("Öst")' class='btn btn-default' value='Planera öst'>
+            </div>
+            <div class='col-md-2'>
+                <input type='button' ng-click='planRegion("Mitt")' class='btn btn-default' value='Planera mitt'>
+            </div>
+            <div class='col-md-2'>
+                <input type='button' ng-click='planRegion("Nord")' class='btn btn-default' value='Planera nord'>
+            </div>
+
+
+        </div>
+        <br>
+        <div ng-show="progress < 100 && numberOfAjaxCalls > 0">
+            <h4 style="display:inline-block">{{currentAjaxCall}} av {{totalNumberOfSwitches}} <small>växlar planerade. Vänligen vänta...&nbsp;&nbsp;&nbsp;</small></h4><div class="spinner" style="display:inline-block; top: -108px;"> <img src="files/ajax-loader.gif"></div>
+        </div>
+        <div ng-show="progress == 100">
+            <h4>{{currentAjaxCall}} av {{totalNumberOfSwitches}} <small>växlar planerade.</small></h4>
+        </div>
+        <br>
+        <progressbar ng-show="progress" value="progress" class="progressBar" type="{{barType}}"></progressbar>
+        <hr style="margin-top: 0px">
+        <div ng-show="delayedSwitches.length > 0 && currentAjaxCall == numberOfAjaxCalls">
+            <h4>
+                Följande <big><strong>{{ delayedSwitches.length }}</strong></big> växlar gick ej att planera. 
+                <br>
+                <small>Vänligen fyll i kolumnen "Planerad testvecka" nedan eller förbättra personalplaneringen och försök igen.</small>
+            </h4>
+            <br>
+            <div class="row">
+                <div class="col-md-12">
+                    <table class="table table-striped table-bordered">
+                        <thead>
+                            <th>Bandel&nbsp;<a ng-click="sort_by('Bdl');"><i class="glyphicon glyphicon-sort"></i></a></th>
+                            <th>Plats&nbsp;<a ng-click="sort_by('TplStr');"><i class="glyphicon glyphicon-sort"></i></a></th>
+                            <th>Benämning&nbsp;<a ng-click="sort_by('Benamning');"><i class="glyphicon glyphicon-sort"></i></a></th>
+                            <th>Typ&nbsp;<a ng-click="sort_by('Typ');"><i class="glyphicon glyphicon-sort"></i></a></th>
+                            <th>UNE&nbsp;<a ng-click="sort_by('UNE');"><i class="glyphicon glyphicon-sort"></i></a></th>
+                            <th>Region&nbsp;<a ng-click="sort_by('Agare');"><i class="glyphicon glyphicon-sort"></i></a></th>
+                            <th>Besiktningsklass&nbsp;<a ng-click="sort_by('Bklass');"><i class="glyphicon glyphicon-sort"></i></a></th>
+                            <th>Senast besiktigad&nbsp;<a ng-click="sort_by('Recentdate');"><i class="glyphicon glyphicon-sort"></i></a></th>
+                            <th>Optimalt testdatum&nbsp;<a ng-click="sort_by('Nextdate');"><i class="glyphicon glyphicon-sort"></i></a></th>
+                            <th>Sista testvecka&nbsp;<a ng-click="sort_by('Lastweek');"><i class="glyphicon glyphicon-sort"></i></a></th>
+                            <th>Planerad testvecka&nbsp;<a ng-click="sort_by('Plannedweek');"><i class="glyphicon glyphicon-sort"></i></a></th>
+                            <th>Testad&nbsp;<a ng-click="sort_by('Tested');"><i class="glyphicon glyphicon-sort"></i></a></th>
+                        </thead>
+                        <tbody>
+                                <tr ng-repeat="data in delayedSwitches | startFrom:(currentPage-1)*entryLimit | limitTo:entryLimit">
+                                    <td align="center">{{data.Bdl}}</td>
+                                    <td>{{data.TplStr}}</td>
+                                    <td>{{data.Benamning}}</td>
+                                    <td>{{data.Typ}}</td>
+                                    <td align="center">{{data.UNE}}</td>
+                                    <td align="center">{{data.Agare}}</td>
+                                    <td align="center">{{data.Bklass}}</td>
+                                    <td align="center">{{data.Recentdate}}</td>
+                                    <td align="center">{{data.Nextdate}}</td>
+                                    <td align="center">{{data.Lastweek | testThisYear}}</td>
+                                    <td  align="center" class="editable"><input type="text" class="editable" ng-change="updatePlannedWeek(data.id, data.Plannedweek)" ng-mousedown="mousedown(data.Plannedweek, 1)" ng-mouseover="mouseover('Plannedweek', data.id, data.Plannedweek, 1, $index)" onkeypress='return event.charCode >= 48 && event.charCode <= 57' ng-model="data.Plannedweek"></input>
+                                    </td>
+                                    <td align="center">{{data.Tested}}</td>
+                                </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-2">Antal växlar per sida:
+                    <select ng-model="entryLimit" class="form-control">
+                        <option>20</option>
+                        <option>50</option>
+                        <option>100</option>
+                    </select>
+                </div>
+                  <div class="col-md-8">    
+                    <div pagination="" page="currentPage" max-size="10" on-select-page="setPage(page)" boundary-links="true" total-items="totalItems" items-per-page="entryLimit" class="pagination-small pull-right" previous-text="&laquo;" next-text="&raquo;">
+                        
+                    </div>
+                </div>
+            </div>
+            <br>
+            <br>              
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script src="bower_components/angular/angular.js"></script>
+<script src="bower_components/jquery/dist/jquery.js"></script>
+<script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>  
+<script src="js/ui-bootstrap-tpls-0.10.0.min.js"></script>
+
+
+
+    <!-- Modules -->
+    <script src="js/app.js"></script>
+
+    <!-- Controllers -->
+    <script src="js/controllers/OverviewController.js"></script>
+    <script src="js/controllers/SearchController.js"></script>
+    <script src="js/controllers/StaffplanningController.js"></script>
+    <script src="js/controllers/DatabaseController.js"></script>
+    <script src="js/controllers/SwitchplanningController.js"></script>
+    <!-- Services -->
+    <script src="js/factories/overview.js"></script>
+    <script src="js/factories/places.js"></script>
+    <script src="js/factories/regions.js"></script>
+    <script src="js/factories/staffplanning.js"></script>
+    <script src="js/factories/switches.js"></script>
+    <script src="js/factories/switchesyear.js"></script>
+    <script src="js/factories/trackparts.js"></script>
+    <script src="js/factories/weeks.js"></script>
+    <script src="js/factories/inspectionclasses.js"></script>
+    <!-- Directives -->
+    <script src="js/directives/switchRow.js"></script>
+
+    </body>
+</html>
